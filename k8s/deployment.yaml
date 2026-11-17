@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: palindrome-checker
+  labels:
+    app: palindrome-checker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: palindrome-checker
+  template:
+    metadata:
+      labels:
+        app: palindrome-checker
+    spec:
+      containers:
+        - name: palindrome-checker
+          image: palindrome-checker:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 7070
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 7070
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 7070
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
